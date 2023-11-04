@@ -4,6 +4,10 @@
 
 Solid Lite Improvement Proposals (SLIPs) are the core mechanism for proposing new features, collecting community input on an issue, and documenting the design decisions that have gone into Solid Lite. Similar to other successful open source extenssions (PIPs, NIPs, FEPs etc.), SLIPs are the primary record for Solid Lite enhancements, providing transparency and a well-defined process for the evolution of the platform.
 
+## SLIPs
+
+- [SLIP1 - Solid Lite Specification](https://solid-lite.org)
+
 ## Concept
 
 SLIPs are a common-knowledge set of proposals, each designed to evolve the Solid Lite network responsibly. They encourage participation and discussion, ensuring that all voices can contribute to the future direction of Solid Lite. Each SLIP goes through a rigorous process of discussion, vetting, and consensus-building within the community.
