@@ -9,6 +9,8 @@ Solid Lite Improvement Proposals (SLIPs) are the core mechanism for proposing ne
 - [SLIP-1: Solid Lite Specification](https://solid-lite.org)
 - [SLIP-80: Null Auth](./80.md)
 - [SLIP-81: API KEY Bearer Auth](./81.md)
+- [SLIP-90: Everyone Read Owner Write Authz](./90.md)
+
 
 ## Concept
 
@@ -40,7 +42,7 @@ The SLIP process begins with a new idea or a concept. Here’s a high-level over
 
 ## Participation
 
-The SLIP process is open to anyone. Participation from the community is not only encouraged but is a critical aspect of the governance and evolution of Solid Lite. Whether you are a developer, a researcher, or simply an enthusiast, your contributions can help shape the future of Solid Lite.
+The SLIP process is open to anyone. Participation from the community is not only encouraged but is a critical aspect of the governance and evolution of Solid Lite. Whether you are a developer, a researcher, or simply an enthusiast, your contributions can help shape the future of [Solid Lite](https://github.com/solid-lite).
 
 ## Conclusion
 
