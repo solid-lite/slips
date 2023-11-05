@@ -9,6 +9,7 @@ Solid Lite Improvement Proposals (SLIPs) are the core mechanism for proposing ne
 - [SLIP-1: Solid Lite Specification](https://solid-lite.org)
 - [SLIP-80: Null Auth](./80.md)
 - [SLIP-81: API KEY Bearer Auth](./81.md)
+- [SLIP-82: PKI Auth](./82.md)
 - [SLIP-90: Everyone Read Owner Write Authz](./90.md)
 
 
