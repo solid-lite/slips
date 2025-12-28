@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLIPs - Solid Lite Implementation Proposals</title>
+  <meta name="description" content="Composable building blocks for decentralized web servers. Pick the SLIPs you need.">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f6f8fa;
+      --text: #1f2328;
+      --text-muted: #656d76;
+      --accent: #0969da;
+      --accent-subtle: #ddf4ff;
+      --border: #d0d7de;
+      --code-bg: #f6f8fa;
+      --success: #1a7f37;
+      --warning: #9a6700;
+      --purple: #8250df;
+      --pink: #bf3989;
+      --cyan: #0550ae;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117;
+        --bg-secondary: #161b22;
+        --text: #e6edf3;
+        --text-muted: #8b949e;
+        --accent: #58a6ff;
+        --accent-subtle: #388bfd26;
+        --border: #30363d;
+        --code-bg: #1c2128;
+        --success: #3fb950;
+        --warning: #d29922;
+        --purple: #a371f7;
+        --pink: #f778ba;
+        --cyan: #79c0ff;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+    }
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header h1 { font-size: 1.5rem; }
+    .header h1 span { color: var(--accent); }
+    .nav { display: flex; gap: 1.5rem; }
+    .nav a { color: var(--text-muted); }
+
+    .hero {
+      background: var(--accent-subtle);
+      border-bottom: 1px solid var(--accent);
+      padding: 2rem;
+      text-align: center;
+    }
+    .hero p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+    .main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-header h2 { font-size: 1.25rem; }
+    .section-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .slip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .slip-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: border-color 0.2s;
+    }
+    .slip-card:hover { border-color: var(--accent); }
+    .slip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .slip-id {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: white;
+    }
+    .slip-status {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      background: var(--code-bg);
+      color: var(--text-muted);
+    }
+    .slip-status.done { background: #dcfce7; color: #166534; }
+    .slip-status.wip { background: #fef3c7; color: #92400e; }
+    @media (prefers-color-scheme: dark) {
+      .slip-status.done { background: #166534; color: #dcfce7; }
+      .slip-status.wip { background: #92400e; color: #fef3c7; }
+    }
+    .slip-card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .slip-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    .recipes {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .recipes h2 { margin-bottom: 1rem; font-size: 1.1rem; }
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+    .recipe {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    .recipe strong { display: block; margin-bottom: 0.25rem; }
+    .recipe span { font-size: 0.8rem; color: var(--text-muted); }
+
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <h1><span>SLIP</span>s</h1>
+      <nav class="nav">
+        <a href="https://solid-lite.org">Spec</a>
+        <a href="https://github.com/JavaScriptSolidServer/JavaScriptSolidServer">JSS</a>
+        <a href="https://github.com/solid-lite/slips">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>Solid Lite Implementation Proposals</h2>
+    <p>Composable building blocks for decentralized web servers. Pick the SLIPs you need — different combinations create different profiles.</p>
+    <p style="margin-top: 1rem;">
+      <span style="background: var(--success); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+        JSS: ~90% Conformance Test Harness
+      </span>
+    </p>
+  </section>
+
+  <main class="main">
+    <div class="recipes">
+      <h2>Recipes: Combine SLIPs</h2>
+      <div class="recipe-grid">
+        <div class="recipe">
+          <strong style="color: var(--success);">Minimal</strong>
+          <span>10 + 11 + 12 + 80</span>
+        </div>
+        <div class="recipe">
+          <strong style="color: var(--warning);">Single-User</strong>
+          <span>+ 81 + 90</span>
+        </div>
+        <div class="recipe">
+          <strong style="color: var(--purple);">LWS</strong>
+          <span>+ 20 + 83 + 91 + 40</span>
+        </div>
+        <div class="recipe">
+          <strong style="color: var(--cyan);">ActivityPub</strong>
+          <span>+ 50 + 51 + 52</span>
+        </div>
+        <div class="recipe">
+          <strong style="color: var(--pink);">Full JSS</strong>
+          <span>All SLIPs</span>
+        </div>
+        <div class="recipe">
+          <strong style="color: var(--accent);">Nostr-Native</strong>
+          <span>+ 21 + 82 + 91</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--success);"></div>
+        <h2>Core Foundation</h2>
+      </div>
+      <div class="slip-grid">
+        <a href="./10.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--success);">SLIP-10</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>HTTP Methods</h3>
+          <p>GET, PUT, DELETE on resources</p>
+        </a>
+        <a href="./11.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--success);">SLIP-11</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>CORS Headers</h3>
+          <p>Cross-origin browser access</p>
+        </a>
+        <a href="./12.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--success);">SLIP-12</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>JSON-LD</h3>
+          <p>Linked data format</p>
+        </a>
+        <a href="./13.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--success);">SLIP-13</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>URI Resources</h3>
+          <p>Stable resource identifiers</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--accent);"></div>
+        <h2>Identity</h2>
+      </div>
+      <div class="slip-grid">
+        <a href="./20.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--accent);">SLIP-20</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>WebID Profile</h3>
+          <p>URI-based identity with RDF</p>
+        </a>
+        <a href="./21.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--accent);">SLIP-21</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>did:nostr</h3>
+          <p>Identity from Nostr pubkey</p>
+        </a>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--accent);">SLIP-22</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>Identity Linking</h3>
+          <p>WebID ↔ did:nostr via owl:sameAs</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--pink);"></div>
+        <h2>Data & Formats</h2>
+      </div>
+      <div class="slip-grid">
+        <a href="./30.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--pink);">SLIP-30</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Turtle</h3>
+          <p>text/turtle RDF format</p>
+        </a>
+        <a href="./31.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--pink);">SLIP-31</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Content Negotiation</h3>
+          <p>Format via Accept header</p>
+        </a>
+        <a href="./32.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--pink);">SLIP-32</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>Data Islands</h3>
+          <p>Embed RDF in HTML</p>
+        </a>
+        <a href="./33.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--pink);">SLIP-33</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>PATCH</h3>
+          <p>N3 Patch / SPARQL Update</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: #56d364;"></div>
+        <h2>Features</h2>
+      </div>
+      <div class="slip-grid">
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: #56d364;">SLIP-40</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Containers</h3>
+          <p>LDP containers with listings</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: #56d364;">SLIP-41</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Pods</h3>
+          <p>User storage provisioning</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: #56d364;">SLIP-42</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>WebSockets</h3>
+          <p>Real-time notifications</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: #56d364;">SLIP-43</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>Type Index</h3>
+          <p>Discover resources by type</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: #56d364;">SLIP-44</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Mashlib/SolidOS</h3>
+          <p>Data browser integration</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--cyan);"></div>
+        <h2>Federation</h2>
+      </div>
+      <div class="slip-grid">
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--cyan);">SLIP-50</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>ActivityPub</h3>
+          <p>Fediverse federation</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--cyan);">SLIP-51</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>WebFinger</h3>
+          <p>User discovery</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--cyan);">SLIP-52</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>HTTP Signatures</h3>
+          <p>Server-to-server auth</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--cyan);">SLIP-53</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>Nostr Relays</h3>
+          <p>Event publishing</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--warning);"></div>
+        <h2>Authentication</h2>
+      </div>
+      <div class="slip-grid">
+        <a href="./80.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--warning);">SLIP-80</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Null Auth</h3>
+          <p>Testing only</p>
+        </a>
+        <a href="./81.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--warning);">SLIP-81</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Bearer Token</h3>
+          <p>API key auth</p>
+        </a>
+        <a href="./82.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--warning);">SLIP-82</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Schnorr/NIP-98</h3>
+          <p>Nostr signatures</p>
+        </a>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--warning);">SLIP-83</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Solid-OIDC</h3>
+          <p>OpenID Connect + DPoP</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="section-dot" style="background: var(--purple);"></div>
+        <h2>Authorization</h2>
+      </div>
+      <div class="slip-grid">
+        <a href="./90.md" class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--purple);">SLIP-90</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>Owner Write</h3>
+          <p>Everyone reads, owner writes</p>
+        </a>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--purple);">SLIP-91</span>
+            <span class="slip-status done">JSS ✓</span>
+          </div>
+          <h3>WAC</h3>
+          <p>Web Access Control</p>
+        </div>
+        <div class="slip-card">
+          <div class="slip-header">
+            <span class="slip-id" style="background: var(--purple);">SLIP-92</span>
+            <span class="slip-status wip">Planned</span>
+          </div>
+          <h3>ACP</h3>
+          <p>Access Control Policy</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      <a href="https://solid-lite.org">Solid Lite</a> ·
+      <a href="https://github.com/solid-lite/slips">Edit on GitHub</a> ·
+      <a href="https://linkedwebstorage.com/">W3C LWS</a>
+    </p>
+  </footer>
+</body>
+</html>
