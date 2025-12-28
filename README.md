@@ -1,50 +1,94 @@
-# Solid Lite Improvement Proposals (SLIPs)
+# Solid Lite Implementation Proposals (SLIPs)
 
-## Introduction
+SLIPs are composable building blocks for decentralized web servers. Pick the SLIPs you need — different combinations create different profiles.
 
-Solid Lite Improvement Proposals (SLIPs) are the core mechanism for proposing new features, collecting community input on an issue, and documenting the design decisions that have gone into Solid Lite. Similar to other successful open source extenssions (PIPs, NIPs, FEPs etc.), SLIPs are the primary record for Solid Lite enhancements, providing transparency and a well-defined process for the evolution of the platform.
+## SLIP Index
 
-## List
+### Core Foundation
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| [10](./10.md) | HTTP Methods | Draft | ✅ |
+| [11](./11.md) | CORS Headers | Draft | ✅ |
+| [12](./12.md) | JSON-LD | Draft | ✅ |
+| 13 | URI Resources | Draft | ✅ |
 
-- [SLIP-1: Solid Lite Specification](https://solid-lite.org)
-- [SLIP-80: Null Auth](./80.md)
-- [SLIP-81: API KEY Bearer Auth](./81.md)
-- [SLIP-82: PKI Auth](./82.md)
-- [SLIP-90: Everyone Read Owner Write Authz](./90.md)
+### Identity
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| 20 | WebID Profile | Draft | ✅ |
+| [21](./21.md) | did:nostr | Draft | ✅ |
+| 22 | Identity Linking | Draft | ⏳ |
 
+### Data & Formats
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| 30 | Turtle | Draft | ✅ |
+| 31 | Content Negotiation | Draft | ✅ |
+| 32 | Data Islands | Draft | ⏳ |
+| 33 | PATCH | Draft | ✅ |
 
-## Concept
+### Features
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| 40 | Containers | Draft | ✅ |
+| 41 | Pods | Draft | ✅ |
+| 42 | WebSockets | Draft | ✅ |
+| 43 | Type Index | Draft | ⏳ |
+| 44 | Mashlib/SolidOS | Draft | ✅ |
 
-SLIPs are a common-knowledge set of proposals, each designed to evolve the Solid Lite network responsibly. They encourage participation and discussion, ensuring that all voices can contribute to the future direction of Solid Lite. Each SLIP goes through a rigorous process of discussion, vetting, and consensus-building within the community.
+### Federation
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| 50 | ActivityPub | Draft | ⏳ |
+| 51 | WebFinger | Draft | ⏳ |
+| 52 | HTTP Signatures | Draft | ⏳ |
+| 53 | Nostr Relays | Draft | ⏳ |
 
-SLIPs are categorized into three numerical ranges, each representing a different scope of influence:
+### Authentication
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| [80](./80.md) | Null Auth | Draft | ✅ |
+| [81](./81.md) | Bearer Token | Draft | ✅ |
+| [82](./82.md) | Schnorr/NIP-98 | Draft | ✅ |
+| 83 | Solid-OIDC | Draft | ✅ |
 
-1. **Core SLIPs (1-1000):** These proposals affect the core protocol of Solid Lite, including consensus mechanisms, block structure, network protocols, and cryptographic algorithms. Core SLIPs require a high degree of technical knowledge and understanding of the underlying infrastructure of Solid Lite.
+### Authorization
+| SLIP | Name | Status | JSS |
+|------|------|--------|-----|
+| [90](./90.md) | Owner Write | Draft | ✅ |
+| 91 | WAC | Draft | ✅ |
+| 92 | ACP | Draft | ⏳ |
 
-2. **Related Project SLIPs (1001-10,000):** Proposals in this range apply to software projects that are intimately related to the Solid Lite core protocol. This may include official wallet interfaces, explorer APIs, or other projects that, while not part of the core protocol, are essential to the Solid Lite ecosystem.
+## Profiles (Recipes)
 
-3. **Miscellaneous SLIPs (10,001-100,000):** This broad category is for all other proposals, including community and social governance, educational resources, and collaborations with external projects. These SLIPs can range from minor tweaks and quality-of-life improvements to new feature suggestions for applications built on Solid Lite.
+Different SLIP combinations create different server profiles:
 
-## Submission Process
+| Profile | SLIPs | Description |
+|---------|-------|-------------|
+| **Minimal** | 10, 11, 12, 80 | 10-minute implementation |
+| **Single-User** | Minimal + 81, 90 | Personal data store |
+| **LWS** | Core + 20, 83, 91, 40 | [W3C target](https://linkedwebstorage.com/) |
+| **ActivityPub** | Minimal + 50, 51, 52 | [Fediverse](https://socialdocs.org/docs/ecosystem/fedbox/) |
+| **Full JSS** | All SLIPs | Complete Solid server |
+| **Nostr-Native** | Minimal + 21, 82, 91 | Passwordless, no registration |
 
-The SLIP process begins with a new idea or a concept. Here’s a high-level overview of the steps an SLIP goes through:
+## Contributing
 
-1. **Pre-proposal Discussion:** This informal stage is for bouncing ideas around within the community. It can be done through community forums, GitHub discussions, or other channels.
+1. **Discuss** your idea in GitHub Issues
+2. **Draft** a SLIP following the template
+3. **Submit** a Pull Request
+4. **Review** and iterate with community
+5. **Implement** in reference server (JSS)
 
-2. **Draft Proposal:** The author formalizes the idea into a draft SLIP, following a template that includes a clear specification, rationale, technical documentation, and any other necessary details.
+## SLIP Numbering
 
-3. **Proposal Review:** The draft is submitted as a pull request to the SLIP repository, where it is assigned a provisional number and reviewed by the community.
+- **1-99**: Core protocol
+- **100-999**: Extended features
+- **1000-9999**: Related projects
+- **10000+**: Community extensions
 
-4. **Community Consensus:** Through discussion and feedback, the proposal is refined. Core SLIPs often require a longer period of scrutiny due to their impact on the network.
+## References
 
-5. **Finalization:** Once a consensus is reached, and any required changes are made, the SLIP is either accepted, deferred, or rejected by the SLIP editors.
-
-6. **Implementation:** For an accepted SLIP, the next step is implementation within the Solid Lite codebase. A successful implementation is followed by integration into the main network.
-
-## Participation
-
-The SLIP process is open to anyone. Participation from the community is not only encouraged but is a critical aspect of the governance and evolution of Solid Lite. Whether you are a developer, a researcher, or simply an enthusiast, your contributions can help shape the future of [Solid Lite](https://github.com/solid-lite).
-
-## Conclusion
-
-SLIPs embody the spirit of open-source development and decentralized decision-making. By setting a clear path for proposals, SLIPs ensure that the Solid Lite network continues to grow and adapt in a way that serves its users best, maintaining transparency, democracy, and innovation at its core.
+- [Solid Lite Spec](https://solid-lite.org)
+- [JSS Reference Implementation](https://github.com/JavaScriptSolidServer/JavaScriptSolidServer)
+- [Linked Web Storage (W3C)](https://linkedwebstorage.com/)
